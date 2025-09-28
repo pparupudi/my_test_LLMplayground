@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Playground</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .slider-gradient {
+            background: linear-gradient(to right, #8b5cf6, #ec4899);
+        }
+        .slider-gradient::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            border: 2px solid #8b5cf6;
+        }
+        .slider-gradient::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            border: 2px solid #8b5cf6;
+        }
+    </style>
+</head>
+<body class="h-full bg-gradient-to-br from-sky-100 via-purple-50 to-violet-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 font-sans antialiased">
+    <div class="min-h-full">
+        <!-- Header -->
+        <header class="text-center py-8 px-4">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex-1"></div>
+                    <h1 class="text-4xl font-bold bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
+                        LLM Playground
+                    </h1>
+                    <div class="flex-1 flex justify-end">
+                        <button id="theme-toggle" class="p-2 rounded-lg bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-slate-200 dark:border-slate-700 hover:bg-white dark:hover:bg-slate-800 transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500" aria-label="Toggle dark mode">
+                            <svg class="w-5 h-5 text-slate-600 dark:text-slate-400 dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                            </svg>
+                            <svg class="w-5 h-5 text-slate-400 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <p class="text-lg text-slate-600 dark:text-slate-300 font-medium">
+                    Experiment with language models in real-time
+                </p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto px-4 pb-8">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Left Panel - Input and Controls (2/3 width) -->
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- Model Parameters Card -->
+                    <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-lg border border-slate-200/50 dark:border-slate-700/50 p-6">
+                        <h3 class="text-xl font-semibold text-slate-900 dark:text-white mb-6 flex items-center gap-3">
+                            <div class="w-1 h-6 bg-gradient-to-b from-violet-500 to-indigo-500 rounded-full"></div>
+                            Model Parameters
+                        </h3>
+                        
+                        <div class="space-y-6">
+                            <div>
+                                <label for="model-select" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Model</label>
+                                <select id="model-select" class="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all" aria-label="Select AI model">
+                                    <optgroup label="Groq (Available)">
+                                        <option value="llama3-8b-8192">Llama 3 8B</option>
+                                        <option value="llama3-70b-8192">Llama 3 70B</option>
+                                        <option value="mixtral-8x7b-32768">Mixtral 8x7B</option>
+                                        <option value="gemma-7b-it">Gemma 7B IT</option>
+                                    </optgroup>
+                                    <optgroup label="OpenAI (Requires API Key)">
+                                        <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                                        <option value="gpt-3.5-turbo-16k">GPT-3.5 Turbo 16K</option>
+                                    </optgroup>
+                                    <optgroup label="Anthropic (Requires API Key)">
+                                        <option value="claude-3-5-sonnet-20241022">Claude 3.5 Sonnet</option>
+                                        <option value="claude-3-haiku-20240307">Claude 3 Haiku</option>
+                                        <option value="claude-3-opus-20240229">Claude 3 Opus</option>
+                                    </optgroup>
+                                    <optgroup label="Hugging Face (Requires API Key)">
+                                        <option value="microsoft/DialoGPT-medium">DialoGPT Medium</option>
+                                        <option value="google/flan-t5-large">Flan-T5 Large</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="temperature" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                                    Temperature: <span id="temperature-value" class="font-mono text-violet-600 dark:text-violet-400">0.7</span>
+                                </label>
+                                <input type="range" id="temperature" class="w-full h-2 bg-gradient-to-r from-purple-500 to-rose-500 rounded-lg appearance-none cursor-pointer slider-gradient" 
+                                       min="0" max="2" step="0.1" value="0.7" aria-label="Temperature slider">
+                                <div class="flex justify-between text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                    <span>Focused</span>
+                                    <span>Creative</span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="max-tokens" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                                    Max Tokens: <span id="max-tokens-value" class="font-mono text-violet-600 dark:text-violet-400">1000</span>
+                                </label>
+                                <input type="range" id="max-tokens" class="w-full h-2 bg-gradient-to-r from-purple-500 to-rose-500 rounded-lg appearance-none cursor-pointer slider-gradient" 
+                                       min="1" max="4000" step="1" value="1000" aria-label="Max tokens slider">
+                                <div class="flex justify-between text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                    <span>1</span>
+                                    <span>4000</span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="top-p" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                                    Top P: <span id="top-p-value" class="font-mono text-violet-600 dark:text-violet-400">1.0</span>
+                                </label>
+                                <input type="range" id="top-p" class="w-full h-2 bg-gradient-to-r from-purple-500 to-rose-500 rounded-lg appearance-none cursor-pointer slider-gradient" 
+                                       min="0" max="1" step="0.01" value="1.0" aria-label="Top P slider">
+                                <div class="flex justify-between text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                    <span>0</span>
+                                    <span>1</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prompt Input Card -->
+                    <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-lg border border-slate-200/50 dark:border-slate-700/50 p-6">
+                        <h3 class="text-xl font-semibold text-slate-900 dark:text-white mb-6 flex items-center gap-3">
+                            <div class="w-1 h-6 bg-gradient-to-b from-violet-500 to-indigo-500 rounded-full"></div>
+                            Prompt
+                        </h3>
+                        <textarea id="prompt-input" class="w-full h-40 px-4 py-3 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all resize-none" 
+                                  placeholder="Enter your prompt here..." aria-label="Prompt input"></textarea>
+                        
+                        <div class="flex gap-3 mt-6">
+                            <button id="generate-btn" class="flex-1 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-full transition-all duration-200 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 dark:focus:ring-offset-slate-800 flex items-center justify-center gap-2" aria-label="Generate response">
+                                <span class="btn-text">Generate</span>
+                                <div class="btn-loader hidden">
+                                    <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                </div>
+                            </button>
+                            <button id="clear-btn" class="bg-white dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 font-semibold py-3 px-6 rounded-full border border-slate-300 dark:border-slate-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 dark:focus:ring-offset-slate-800" aria-label="Clear prompt">
+                                Clear
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Prompt Suggestions Card -->
+                    <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-lg border border-slate-200/50 dark:border-slate-700/50 p-6">
+                        <div class="text-center mb-6">
+                            <h3 class="text-xl font-semibold text-slate-900 dark:text-white mb-2">
+                                What would you like to explore today?
+                            </h3>
+                            <p class="text-sm text-slate-600 dark:text-slate-400">
+                                Choose a prompt below or ask your own question
+                            </p>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <button class="prompt-suggestion-card group p-4 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-800 rounded-xl hover:shadow-md hover:scale-[1.02] transition-all duration-200 text-left focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                                    data-prompt="Explain quantum computing in simple terms that a beginner can understand. Include key concepts and real-world applications.">
+                                <div class="flex items-start gap-3">
+                                    <div class="flex-shrink-0 w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                            Explain quantum computing in simple terms
+                                        </h4>
+                                    </div>
+                                </div>
+                            </button>
+
+                            <button class="prompt-suggestion-card group p-4 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border border-purple-200 dark:border-purple-800 rounded-xl hover:shadow-md hover:scale-[1.02] transition-all duration-200 text-left focus:outline-none focus:ring-2 focus:ring-purple-500" 
+                                    data-prompt="Write a creative story about AI and humans working together to solve climate change. Make it inspiring and hopeful.">
+                                <div class="flex items-start gap-3">
+                                    <div class="flex-shrink-0 w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium text-slate-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
+                                            Write a creative story about AI and humans
+                                        </h4>
+                                    </div>
+                                </div>
+                            </button>
+
+                            <button class="prompt-suggestion-card group p-4 bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 border border-orange-200 dark:border-orange-800 rounded-xl hover:shadow-md hover:scale-[1.02] transition-all duration-200 text-left focus:outline-none focus:ring-2 focus:ring-orange-500" 
+                                    data-prompt="Help me debug this Python code and explain what's wrong: [paste your code here]">
+                                <div class="flex items-start gap-3">
+                                    <div class="flex-shrink-0 w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium text-slate-900 dark:text-white group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+                                            Help me debug this Python code
+                                        </h4>
+                                    </div>
+                                </div>
+                            </button>
+
+                            <button class="prompt-suggestion-card group p-4 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-200 dark:border-green-800 rounded-xl hover:shadow-md hover:scale-[1.02] transition-all duration-200 text-left focus:outline-none focus:ring-2 focus:ring-green-500" 
+                                    data-prompt="Summarize the latest trends in machine learning and artificial intelligence for 2024. Focus on practical applications.">
+                                <div class="flex items-start gap-3">
+                                    <div class="flex-shrink-0 w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium text-slate-900 dark:text-white group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">
+                                            Summarize the latest trends in machine learning
+                                        </h4>
+                                    </div>
+                                </div>
+                            </button>
+
+                            <button class="prompt-suggestion-card group p-4 bg-gradient-to-br from-yellow-50 to-amber-50 dark:from-yellow-900/20 dark:to-amber-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl hover:shadow-md hover:scale-[1.02] transition-all duration-200 text-left focus:outline-none focus:ring-2 focus:ring-yellow-500" 
+                                    data-prompt="Create a business plan for a tech startup that uses AI to solve environmental problems. Include market analysis and revenue model.">
+                                <div class="flex items-start gap-3">
+                                    <div class="flex-shrink-0 w-8 h-8 bg-yellow-500 rounded-lg flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium text-slate-900 dark:text-white group-hover:text-yellow-600 dark:group-hover:text-yellow-400 transition-colors">
+                                            Create a business plan for a tech startup
+                                        </h4>
+                                    </div>
+                                </div>
+                            </button>
+
+                            <button class="prompt-suggestion-card group p-4 bg-gradient-to-br from-teal-50 to-cyan-50 dark:from-teal-900/20 dark:to-cyan-900/20 border border-teal-200 dark:border-teal-800 rounded-xl hover:shadow-md hover:scale-[1.02] transition-all duration-200 text-left focus:outline-none focus:ring-2 focus:ring-teal-500" 
+                                    data-prompt="Explain the difference between React and Vue.js frameworks. Include pros, cons, and when to use each one.">
+                                <div class="flex items-start gap-3">
+                                    <div class="flex-shrink-0 w-8 h-8 bg-teal-500 rounded-lg flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium text-slate-900 dark:text-white group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
+                                            Explain the difference between React and Vue.js
+                                        </h4>
+                                    </div>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Panel - Output (1/3 width) -->
+                <div class="space-y-6">
+                    <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-lg border border-slate-200/50 dark:border-slate-700/50 p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-xl font-semibold text-slate-900 dark:text-white flex items-center gap-3">
+                                <div class="w-1 h-6 bg-gradient-to-b from-violet-500 to-indigo-500 rounded-full"></div>
+                                Output
+                            </h3>
+                            <div class="flex gap-2">
+                                <button id="copy-btn" class="p-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-400 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500" title="Copy to clipboard" aria-label="Copy output to clipboard">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                </button>
+                                <button id="download-btn" class="p-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-400 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500" title="Download as text" aria-label="Download output as text file">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                        <polyline points="7,10 12,15 17,10"></polyline>
+                                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div id="output-display" class="bg-slate-50 dark:bg-slate-900 rounded-lg p-4 min-h-[300px] max-h-[500px] overflow-auto border border-slate-200 dark:border-slate-700">
+                            <div class="output-placeholder flex flex-col items-center justify-center h-full text-center py-12">
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-slate-400 dark:text-slate-500 mb-4">
+                                    <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                                    <path d="M2 17l10 5 10-5"></path>
+                                    <path d="M2 12l10 5 10-5"></path>
+                                </svg>
+                                <p class="text-slate-500 dark:text-slate-400 text-sm">Your generated content will appear here</p>
+                            </div>
+                        </div>
+
+                        <!-- Token Usage Info -->
+                        <div class="mt-4 p-4 bg-slate-50 dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700">
+                            <div class="grid grid-cols-3 gap-4 text-center">
+                                <div>
+                                    <div class="text-xs text-slate-500 dark:text-slate-400 mb-1">Prompt</div>
+                                    <div id="prompt-tokens" class="text-sm font-mono font-semibold text-slate-900 dark:text-white">0</div>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-slate-500 dark:text-slate-400 mb-1">Completion</div>
+                                    <div id="completion-tokens" class="text-sm font-mono font-semibold text-slate-900 dark:text-white">0</div>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-slate-500 dark:text-slate-400 mb-1">Total</div>
+                                    <div id="total-tokens" class="text-sm font-mono font-semibold text-violet-600 dark:text-violet-400">0</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+{
+  "name": "llm-playground",
+  "version": "1.0.0",
+  "description": "A playground for testing different LLM APIs",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'No build step required for static frontend'",
+    "start": "vercel dev"
+  },
+  "keywords": [
+    "llm",
+    "ai",
+    "playground",
+    "openai",
+    "anthropic",
+    "groq",
+    "huggingface"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "vercel": "^32.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
