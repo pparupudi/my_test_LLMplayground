@@ -4,6 +4,7 @@ import { Container, Navbar, Nav, Button, Dropdown, Card, Row, Col, Form, InputGr
 import { apiService } from '../services/api';
 
 const LandingPage = () => {
+  // Ensure About Me button is visible in deployment
   const [selectedProvider, setSelectedProvider] = useState('Anthropic');
   const [selectedModel, setSelectedModel] = useState('claude-3-haiku-20240307');
   const [message, setMessage] = useState('');
