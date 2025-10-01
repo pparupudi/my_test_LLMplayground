@@ -5,7 +5,7 @@ import { UnauthorizedError } from './errorHandler.js';
  */
 export const validateApiKeys = (req, res, next) => {
   // Skip validation for health check and other non-API routes
-  if (!req.path.startsWith('/api/')) {
+  if (!req.path.startsWith('/api/') && req.path !== '/chat') {
     return next();
   }
 
@@ -18,19 +18,48 @@ export const validateApiKeys = (req, res, next) => {
   let requiredKey = null;
   let keyName = null;
 
-  // Determine which API key is required based on the route
-  if (route.startsWith('/api/openai')) {
-    requiredKey = process.env.OPENAI_API_KEY;
-    keyName = 'OPENAI_API_KEY';
-  } else if (route.startsWith('/api/anthropic')) {
-    requiredKey = process.env.ANTHROPIC_API_KEY;
-    keyName = 'ANTHROPIC_API_KEY';
-  } else if (route.startsWith('/api/huggingface')) {
-    requiredKey = process.env.HUGGINGFACE_API_KEY;
-    keyName = 'HUGGINGFACE_API_KEY';
-  } else if (route.startsWith('/api/groq')) {
-    requiredKey = process.env.GROQ_API_KEY;
-    keyName = 'GROQ_API_KEY';
+  // Handle unified chat endpoint - check provider in request body
+  if (route === '/chat') {
+    const { provider } = req.body;
+    if (!provider) {
+      return next(); // Let the main handler deal with missing provider
+    }
+    
+    switch (provider.toLowerCase()) {
+      case 'openai':
+        requiredKey = process.env.OPENAI_API_KEY;
+        keyName = 'OPENAI_API_KEY';
+        break;
+      case 'anthropic':
+        requiredKey = process.env.ANTHROPIC_API_KEY;
+        keyName = 'ANTHROPIC_API_KEY';
+        break;
+      case 'huggingface':
+        requiredKey = process.env.HUGGINGFACE_API_KEY;
+        keyName = 'HUGGINGFACE_API_KEY';
+        break;
+      case 'groq':
+        requiredKey = process.env.GROQ_API_KEY;
+        keyName = 'GROQ_API_KEY';
+        break;
+      default:
+        return next(); // Let the main handler deal with invalid provider
+    }
+  } else {
+    // Determine which API key is required based on the route
+    if (route.startsWith('/api/openai')) {
+      requiredKey = process.env.OPENAI_API_KEY;
+      keyName = 'OPENAI_API_KEY';
+    } else if (route.startsWith('/api/anthropic')) {
+      requiredKey = process.env.ANTHROPIC_API_KEY;
+      keyName = 'ANTHROPIC_API_KEY';
+    } else if (route.startsWith('/api/huggingface')) {
+      requiredKey = process.env.HUGGINGFACE_API_KEY;
+      keyName = 'HUGGINGFACE_API_KEY';
+    } else if (route.startsWith('/api/groq')) {
+      requiredKey = process.env.GROQ_API_KEY;
+      keyName = 'GROQ_API_KEY';
+    }
   }
 
   // Check if the required API key exists and is not a placeholder

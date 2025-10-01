@@ -13,6 +13,12 @@ import huggingfaceRoutes from './routes/huggingface.js';
 import groqRoutes from './routes/groq.js';
 import modelsRoutes from './routes/models.js';
 
+// Import services for unified chat endpoint
+import openaiService from './services/openaiService.js';
+import anthropicService from './services/anthropicService.js';
+import huggingfaceService from './services/huggingfaceService.js';
+import groqService from './services/groqService.js';
+
 // Import middleware
 import { errorHandler } from './middleware/errorHandler.js';
 import { validateApiKeys } from './middleware/validateApiKeys.js';
@@ -80,7 +86,115 @@ app.get('/health', (req, res) => {
   });
 });
 
-// API routes
+// Unified chat endpoint
+app.post('/chat', async (req, res) => {
+  try {
+    const { provider, prompt, model, temperature, max_tokens, top_p } = req.body;
+    
+    if (!provider) {
+      return res.status(400).json({
+        success: false,
+        error: 'Provider is required',
+        message: 'Please specify a provider (openai, anthropic, huggingface, groq)'
+      });
+    }
+
+    if (!prompt || typeof prompt !== 'string' || prompt.trim().length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: 'Prompt is required and must be a non-empty string'
+      });
+    }
+
+    let result;
+    
+    // Route to the appropriate provider service
+    switch (provider.toLowerCase()) {
+      case 'openai':
+        result = await openaiService.generateCompletion({
+          prompt,
+          model: model || 'gpt-3.5-turbo',
+          temperature: temperature || 0.7,
+          max_tokens: max_tokens || 1000,
+          top_p: top_p || 1
+        });
+        break;
+      
+      case 'anthropic':
+        result = await anthropicService.generateCompletion({
+          prompt,
+          model: model || 'claude-3-haiku-20240307',
+          temperature: temperature || 0.7,
+          max_tokens: max_tokens || 1000,
+          top_p: top_p || 1
+        });
+        break;
+      
+      case 'huggingface':
+        result = await huggingfaceService.generateCompletion({
+          prompt,
+          model: model || 'microsoft/DialoGPT-medium',
+          temperature: temperature || 0.7,
+          max_tokens: max_tokens || 1000,
+          top_p: top_p || 1
+        });
+        break;
+      
+      case 'groq':
+        result = await groqService.generateCompletion({
+          prompt,
+          model: model || 'mixtral-8x7b-32768',
+          temperature: temperature || 0.7,
+          max_tokens: max_tokens || 1000,
+          top_p: top_p || 1
+        });
+        break;
+      
+      default:
+        return res.status(400).json({
+          success: false,
+          error: 'Invalid provider',
+          message: `Provider '${provider}' is not supported. Available providers: openai, anthropic, huggingface, groq`
+        });
+    }
+
+    res.json(result);
+  } catch (error) {
+    console.error('Chat endpoint error:', error);
+    
+    const { provider } = req.body;
+    
+    // Check if it's an API key related error
+    if (error.message && (
+      (error.message.includes('invalid') && error.message.includes('key')) ||
+      error.message.includes('Invalid') && error.message.includes('API key')
+    )) {
+      return res.status(401).json({
+        success: false,
+        error: 'Invalid API Key',
+        message: `The ${provider || 'API'} API key is invalid or not configured properly. Please check your .env file and ensure you have a valid API key.`
+      });
+    }
+    
+    // Check if it's an authentication error
+    if (error.message && error.message.includes('authentication')) {
+      return res.status(401).json({
+        success: false,
+        error: 'Authentication Error',
+        message: `Authentication failed with ${provider || 'the service'}. Please verify your API key is correct.`
+      });
+    }
+    
+    // Generic error for other cases
+    res.status(500).json({
+      success: false,
+      error: 'Internal server error',
+      message: error.message || 'An error occurred while processing your request'
+    });
+  }
+});
+
+// Routes
 app.use('/api/openai', openaiRoutes);
 app.use('/api/anthropic', anthropicRoutes);
 app.use('/api/huggingface', huggingfaceRoutes);
