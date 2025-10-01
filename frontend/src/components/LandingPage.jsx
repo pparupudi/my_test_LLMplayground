@@ -66,7 +66,7 @@ const LandingPage = () => {
           // Define contextual responses that try to actually answer user questions
           let selectedResponse = "";
           
-          if (userInput.includes('hello') || userInput.includes('hi')) {
+          if (userInput.includes('hello') || userInput.includes('hi') || userInput.includes('hey')) {
             const greetingResponses = [
               "Hello! How can I help you today?",
               "Hi there! What would you like to know or discuss?",
@@ -80,6 +80,13 @@ const LandingPage = () => {
               "Modern healthcare focuses on both treatment and prevention, incorporating technology like electronic health records, telemedicine, and advanced diagnostic tools to improve patient outcomes."
             ];
             selectedResponse = healthResponses[Math.floor(Math.random() * healthResponses.length)];
+          } else if (userInput.includes('generative ai') || userInput.includes('artificial intelligence') || userInput.includes('ai')) {
+            const aiResponses = [
+              "Generative AI refers to artificial intelligence systems that can create new content like text, images, code, or audio. Examples include GPT models for text generation, DALL-E for images, and GitHub Copilot for code.",
+              "AI technology has advanced rapidly, with large language models like GPT, Claude, and Llama becoming increasingly capable at understanding and generating human-like responses across many domains.",
+              "Artificial intelligence is transforming many industries by automating tasks, providing insights from data, and enabling new forms of human-computer interaction."
+            ];
+            selectedResponse = aiResponses[Math.floor(Math.random() * aiResponses.length)];
           } else if (userInput.includes('what is') || userInput.includes('what are')) {
             const explanationResponses = [
               "I'd be happy to explain that topic! Could you be more specific about what you'd like to know?",
@@ -109,7 +116,7 @@ const LandingPage = () => {
             ];
             selectedResponse = testingResponses[Math.floor(Math.random() * testingResponses.length)];
           } else {
-            // Default responses that try to be helpful
+            // Default responses that try to be helpful and contextual
             const defaultResponses = [
               "I understand you're asking about that topic. While I'm in demo mode, I can provide general information and try to be helpful with your questions.",
               "That's an interesting topic! I'd be happy to discuss it further. What specific aspect would you like to explore?",
@@ -118,9 +125,7 @@ const LandingPage = () => {
               "I'm here to help with information and discussions on a wide range of topics. What would you like to know more about?",
               "That's a good question! Let me share what I know about that topic.",
               "I can assist with explanations, discussions, and answering questions on many subjects. How can I help you today?",
-              "Interesting question! I'm designed to be helpful and informative across many different topics and areas of knowledge.",
-              "This simulated response demonstrates the smooth, responsive chat experience. Try resizing your browser to see the adaptive design!",
-              "In this demo, I can provide varied responses on different topics. The interface maintains excellent usability whether you're on phone, tablet, or desktop."
+              "Interesting question! I'm designed to be helpful and informative across many different topics and areas of knowledge."
             ];
             selectedResponse = defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
           }
