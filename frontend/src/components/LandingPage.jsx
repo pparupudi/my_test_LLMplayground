@@ -1,10 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { Container, Navbar, Nav, Button, Dropdown, Card, Row, Col, Form, InputGroup, Alert, Spinner } from 'react-bootstrap';
 import { apiService } from '../services/api';
 
 const LandingPage = () => {
-  // Force fresh deployment - About Me button and color fix
   const [selectedProvider, setSelectedProvider] = useState('Anthropic');
   const [selectedModel, setSelectedModel] = useState('claude-3-haiku-20240307');
   const [message, setMessage] = useState('');
@@ -383,20 +381,6 @@ const LandingPage = () => {
                   ))}
                 </Dropdown.Menu>
               </Dropdown>
-              
-              <Link to="/about" style={{ textDecoration: 'none' }}>
-                <Button 
-                  variant="outline-primary" 
-                  size="sm"
-                  style={{ 
-                    fontSize: '12px',
-                    padding: '6px 12px',
-                    marginRight: '8px'
-                  }}
-                >
-                  About Me
-                </Button>
-              </Link>
               
               <Button 
                 variant="outline-danger" 
