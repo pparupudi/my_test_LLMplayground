@@ -63,41 +63,62 @@ const LandingPage = () => {
           const userInput = userMessage.toLowerCase().trim();
           console.log('Processing user input:', userInput);
           
-          // Define contextual responses first
+          // Define contextual responses that try to actually answer user questions
           let selectedResponse = "";
           
           if (userInput.includes('hello') || userInput.includes('hi')) {
             const greetingResponses = [
-              "Hello! Welcome to the LLM Playground demo. I'm simulating responses to show how the chat interface works across different devices.",
-              "Hi there! This is demo mode - I'm providing simulated AI responses to showcase the responsive design of this chat interface.",
-              "Hello! Great to see you testing the demo. This interface adapts beautifully to any screen size you're using."
+              "Hello! How can I help you today?",
+              "Hi there! What would you like to know or discuss?",
+              "Hello! I'm here to assist you. What's on your mind?"
             ];
             selectedResponse = greetingResponses[Math.floor(Math.random() * greetingResponses.length)];
+          } else if (userInput.includes('health') || userInput.includes('care') || userInput.includes('medical')) {
+            const healthResponses = [
+              "Healthcare is a broad field encompassing medical services, prevention, diagnosis, and treatment of illness. It includes hospitals, clinics, doctors, nurses, and various medical professionals working to maintain and improve people's health.",
+              "Healthcare systems vary by country, but generally include primary care (family doctors), specialized care (specialists), emergency services, and preventive care. Access and quality can vary significantly based on location and economic factors.",
+              "Modern healthcare focuses on both treatment and prevention, incorporating technology like electronic health records, telemedicine, and advanced diagnostic tools to improve patient outcomes."
+            ];
+            selectedResponse = healthResponses[Math.floor(Math.random() * healthResponses.length)];
+          } else if (userInput.includes('what is') || userInput.includes('what are')) {
+            const explanationResponses = [
+              "I'd be happy to explain that topic! Could you be more specific about what you'd like to know?",
+              "That's an interesting question. Let me provide some general information based on what you're asking about.",
+              "I can help explain that concept. Here's what I understand about your question..."
+            ];
+            selectedResponse = explanationResponses[Math.floor(Math.random() * explanationResponses.length)];
+          } else if (userInput.includes('how') || userInput.includes('why')) {
+            const howWhyResponses = [
+              "That's a great question! Let me break that down for you.",
+              "There are several factors that contribute to this. Here's what you should know:",
+              "Good question! The answer involves understanding a few key concepts."
+            ];
+            selectedResponse = howWhyResponses[Math.floor(Math.random() * howWhyResponses.length)];
           } else if (userInput.includes('mobile') || userInput.includes('responsive')) {
             const responsiveResponses = [
-              "You asked about mobile/responsive design! This demo perfectly showcases how the interface adapts to different screen sizes with fluid layouts and collapsible navigation.",
-              "Excellent question about responsiveness! Notice how this chat interface automatically adjusts for optimal viewing on mobile, tablet, and desktop devices.",
-              "Mobile responsiveness is key! This demo shows how modern web apps should adapt seamlessly across all device types."
+              "Mobile and responsive design ensures websites work well on all devices - phones, tablets, and desktops. It involves flexible layouts, scalable images, and touch-friendly interfaces.",
+              "Responsive design uses CSS media queries and flexible grids to adapt content to different screen sizes, providing optimal viewing experiences across all devices.",
+              "Mobile-first design prioritizes the mobile experience, then enhances it for larger screens, ensuring fast loading and easy navigation on smartphones."
             ];
             selectedResponse = responsiveResponses[Math.floor(Math.random() * responsiveResponses.length)];
           } else if (userInput.includes('test') || userInput.includes('demo')) {
             const testingResponses = [
-              "Perfect for testing! This demo mode lets you explore the responsive chat interface without needing backend API keys. Try it on different screen sizes!",
-              "Great that you're testing the demo! This showcases how the interface maintains excellent usability across all devices.",
-              "Testing mode active! This demo highlights the responsive design principles used in modern chat interfaces."
+              "This is a demo mode where I provide simulated responses. In the full version, you'd connect to real AI models like GPT, Claude, or Llama.",
+              "You're testing the demo! This shows how the chat interface works. The real version connects to various AI providers for actual conversations.",
+              "Demo mode active! This simulates how conversations would work with real AI models. Try asking different types of questions!"
             ];
             selectedResponse = testingResponses[Math.floor(Math.random() * testingResponses.length)];
           } else {
-            // Default responses for other inputs
+            // Default responses that try to be helpful
             const defaultResponses = [
-              "I'm a simulated AI response in demo mode. This LLM Playground showcases responsive design that works beautifully across all devices.",
-              "Since this is a demo deployment, I'm providing simulated responses. The interface adapts perfectly to mobile, tablet, and desktop screens.",
-              "I'm demonstrating how this chat interface handles different types of conversations. Notice how the navigation collapses on smaller screens for better mobile experience.",
-              "This is a sample response showing the chat functionality. The responsive design ensures optimal viewing on any device size.",
-              "In demo mode, I can discuss various topics. The UI automatically adjusts for the best user experience across different screen sizes.",
-              "Thanks for trying the demo! This playground demonstrates modern responsive web design principles with a clean, mobile-first approach.",
-              "I'm simulating an AI conversation to showcase the chat interface. The layout seamlessly adapts from desktop to mobile views.",
-              "Demo mode active! This response shows how the chat handles longer messages and maintains readability across all device types.",
+              "I understand you're asking about that topic. While I'm in demo mode, I can provide general information and try to be helpful with your questions.",
+              "That's an interesting topic! I'd be happy to discuss it further. What specific aspect would you like to explore?",
+              "I can help with various topics and questions. Feel free to ask me anything you're curious about!",
+              "Thanks for your question! I'll do my best to provide useful information based on what you're asking.",
+              "I'm here to help with information and discussions on a wide range of topics. What would you like to know more about?",
+              "That's a good question! Let me share what I know about that topic.",
+              "I can assist with explanations, discussions, and answering questions on many subjects. How can I help you today?",
+              "Interesting question! I'm designed to be helpful and informative across many different topics and areas of knowledge.",
               "This simulated response demonstrates the smooth, responsive chat experience. Try resizing your browser to see the adaptive design!",
               "In this demo, I can provide varied responses on different topics. The interface maintains excellent usability whether you're on phone, tablet, or desktop."
             ];
