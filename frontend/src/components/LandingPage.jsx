@@ -246,7 +246,7 @@ const LandingPage = () => {
       {/* Navigation */}
       <Container className="py-3">
         <Row className="align-items-center">
-          <Col md={6}>
+          <Col xs={12} md={6} className="mb-2 mb-md-0">
             <div className="d-flex align-items-center">
               <div className="me-3">
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ backgroundColor: '#059669', borderRadius: '8px', padding: '6px' }}>
@@ -259,8 +259,8 @@ const LandingPage = () => {
               </div>
             </div>
           </Col>
-          <Col md={6} className="d-flex align-items-center justify-content-end">
-            <div className="d-flex align-items-center gap-2">
+          <Col xs={12} md={6} className="d-flex align-items-center justify-content-md-end justify-content-center">
+            <div className="d-flex align-items-center gap-2 flex-wrap justify-content-center justify-content-md-end">
               <Dropdown className="me-2">
                 <Dropdown.Toggle 
                   variant="outline-secondary" 
