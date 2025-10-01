@@ -1,0 +1,27 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Rounded square background with gradient -->
+  <defs>
+    <linearGradient id="greenGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4a5d23;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3d4f1d;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="8" stdDeviation="16" flood-color="rgba(0,0,0,0.2)"/>
+    </filter>
+  </defs>
+  
+  <!-- Background rounded rectangle -->
+  <rect x="32" y="32" width="448" height="448" rx="120" ry="120" fill="url(#greenGradient)" filter="url(#shadow)"/>
+  
+  <!-- Chat bubble -->
+  <g transform="translate(256, 256)">
+    <!-- Main chat bubble -->
+    <rect x="-80" y="-60" width="120" height="80" rx="12" ry="12" fill="white" stroke="none"/>
+    
+    <!-- Chat bubble tail -->
+    <path d="M -80 20 L -80 40 L -100 30 Z" fill="white"/>
+    
+    <!-- Inner chat bubble (smaller) -->
+    <rect x="-60" y="-40" width="80" height="50" rx="8" ry="8" fill="none" stroke="white" stroke-width="3"/>
+  </g>
+</svg>

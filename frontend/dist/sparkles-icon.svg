@@ -1,0 +1,20 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle with subtle gradient -->
+  <circle cx="24" cy="24" r="20" fill="#e8f5e8" stroke="none"/>
+  
+  <!-- Main sparkle/star icon -->
+  <g fill="#4a5d23">
+    <!-- Large central star -->
+    <path d="M24 8 L26 18 L36 16 L28 24 L36 32 L26 30 L24 40 L22 30 L12 32 L20 24 L12 16 L22 18 Z"/>
+    
+    <!-- Small sparkles around -->
+    <circle cx="16" cy="12" r="1.5"/>
+    <circle cx="32" cy="12" r="1"/>
+    <circle cx="36" cy="20" r="1.5"/>
+    <circle cx="36" cy="28" r="1"/>
+    <circle cx="32" cy="36" r="1.5"/>
+    <circle cx="16" cy="36" r="1"/>
+    <circle cx="12" cy="28" r="1.5"/>
+    <circle cx="12" cy="20" r="1"/>
+  </g>
+</svg>
