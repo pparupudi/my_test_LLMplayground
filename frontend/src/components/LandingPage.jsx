@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Container, Navbar, Nav, Button, Dropdown, Card, Row, Col, Form, InputGroup, Alert, Spinner } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import { apiService } from '../services/api';
 
 const LandingPage = () => {
@@ -48,10 +49,9 @@ const LandingPage = () => {
       setIsLoading(true);
 
       try {
-        // Check if we're in demo mode (no backend available)
+        // Check if we're in demo mode (deployed without backend)
         const isDemoMode = window.location.hostname.includes('vercel.app') || 
-                          window.location.hostname.includes('netlify.app') ||
-                          window.location.hostname === 'localhost';
+                          window.location.hostname.includes('netlify.app');
         
         console.log('Demo mode check:', { hostname: window.location.hostname, isDemoMode });
         
@@ -381,6 +381,20 @@ const LandingPage = () => {
                   ))}
                 </Dropdown.Menu>
               </Dropdown>
+              
+              <Link to="/about">
+                <Button 
+                  variant="outline-success" 
+                  size="sm"
+                  style={{ 
+                    fontSize: '12px',
+                    padding: '6px 12px',
+                    marginRight: '8px'
+                  }}
+                >
+                  About Me
+                </Button>
+              </Link>
               
               <Button 
                 variant="outline-danger" 
