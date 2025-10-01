@@ -6,7 +6,7 @@ const isProduction = window.location.hostname.includes('vercel.app') ||
                     window.location.hostname !== 'localhost';
 
 // Base URL for the backend API
-const BASE_URL = isProduction ? '/api' : '';
+const BASE_URL = isProduction ? '/api' : 'http://localhost:3001';
 
 // Create axios instance with default config
 const api = axios.create({
@@ -63,20 +63,23 @@ export const apiService = {
     }
   },
 
-  // Get available models for a provider
+  // Get available models for a provider (simplified for serverless)
   async getModels(provider = 'anthropic') {
-    try {
-      const response = await api.get(`/api/models/${provider}`);
-      return response.data;
-    } catch (error) {
-      throw new Error(`Failed to fetch ${provider} models: ${error.message}`);
-    }
+    // Return static models since we don't have a models endpoint in serverless
+    const providerModels = {
+      openai: ['gpt-3.5-turbo', 'gpt-4'],
+      anthropic: ['claude-3-haiku-20240307', 'claude-3-sonnet-20240229'],
+      groq: ['llama-3.1-8b-instant', 'llama-3.1-70b-versatile', 'mixtral-8x7b-32768'],
+      gemini: ['gemini-2.5-flash', 'gemini-1.5-pro']
+    };
+    return { models: providerModels[provider] || [] };
   },
 
   // Send chat message to OpenAI
   async chatWithOpenAI(prompt, model = 'gpt-3.5-turbo', options = {}) {
     try {
-      const response = await api.post('/api/openai', {
+      const response = await api.post('/chat', {
+        provider: 'openai',
         prompt,
         model,
         ...options
@@ -90,7 +93,8 @@ export const apiService = {
   // Send chat message to Anthropic
   async chatWithAnthropic(prompt, model = 'claude-3-haiku-20240307', options = {}) {
     try {
-      const response = await api.post('/api/anthropic', {
+      const response = await api.post('/chat', {
+        provider: 'anthropic',
         prompt,
         model,
         ...options
@@ -104,7 +108,8 @@ export const apiService = {
   // Send chat message to Groq
   async chatWithGroq(prompt, model = 'llama-3.1-8b-instant', options = {}) {
     try {
-      const response = await api.post('/api/groq', {
+      const response = await api.post('/chat', {
+        provider: 'groq',
         prompt,
         model,
         temperature: 0.7,
@@ -121,7 +126,8 @@ export const apiService = {
   // Send chat message to Gemini
   async chatWithGemini(prompt, model = 'gemini-2.5-flash', options = {}) {
     try {
-      const response = await api.post('/api/gemini', {
+      const response = await api.post('/chat', {
+        provider: 'gemini',
         prompt,
         model,
         temperature: 0.7,
