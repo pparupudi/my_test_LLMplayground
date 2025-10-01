@@ -48,26 +48,54 @@ const LandingPage = () => {
       setIsLoading(true);
 
       try {
-         // Send message to backend
-         const providerMapping = {
-           'OpenAI': 'openai',
-           'Anthropic': 'anthropic', 
-           'Groq': 'groq',
-           'Gemini': 'gemini'
-         };
-         const providerKey = providerMapping[selectedProvider];
-         const response = await apiService.chat(providerKey, userMessage, selectedModel);
+        // Check if we're in demo mode (no backend available)
+        const isDemoMode = window.location.hostname.includes('vercel.app') || window.location.hostname.includes('netlify.app');
         
-        // Add AI response to chat
-        const aiMessage = {
-          id: Date.now() + 1,
-          type: 'assistant',
-          content: response.data.content,
-          model: response.data.model,
-          provider: selectedProvider,
-          timestamp: new Date()
-        };
-        setMessages(prev => [...prev, aiMessage]);
+        if (isDemoMode) {
+          // Demo mode - simulate AI response
+          await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000)); // Simulate API delay
+          
+          const demoResponses = [
+            "This is a demo response from the LLM Playground! The responsive design is working perfectly on mobile devices.",
+            "Hello! I'm simulating a response since this is a demo deployment. The navigation should stack nicely on smaller screens.",
+            "Great question! In demo mode, I can show you how the chat interface adapts to different screen sizes.",
+            "The responsive design ensures that this chat interface works seamlessly across desktop, tablet, and mobile devices.",
+            "This demo showcases the mobile-friendly navigation and chat layout. Try resizing your browser window!"
+          ];
+          
+          const randomResponse = demoResponses[Math.floor(Math.random() * demoResponses.length)];
+          
+          const aiMessage = {
+            id: Date.now() + 1,
+            type: 'assistant',
+            content: randomResponse,
+            model: selectedModel,
+            provider: selectedProvider,
+            timestamp: new Date()
+          };
+          setMessages(prev => [...prev, aiMessage]);
+        } else {
+          // Production mode - use actual API
+          const providerMapping = {
+            'OpenAI': 'openai',
+            'Anthropic': 'anthropic', 
+            'Groq': 'groq',
+            'Gemini': 'gemini'
+          };
+          const providerKey = providerMapping[selectedProvider];
+          const response = await apiService.chat(providerKey, userMessage, selectedModel);
+          
+          // Add AI response to chat
+          const aiMessage = {
+            id: Date.now() + 1,
+            type: 'assistant',
+            content: response.data.content,
+            model: response.data.model,
+            provider: selectedProvider,
+            timestamp: new Date()
+          };
+          setMessages(prev => [...prev, aiMessage]);
+        }
       } catch (error) {
         console.error('Chat error:', error);
         setError(error.message);
