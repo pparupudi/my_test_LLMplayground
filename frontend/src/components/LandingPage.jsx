@@ -56,14 +56,35 @@ const LandingPage = () => {
           await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000)); // Simulate API delay
           
           const demoResponses = [
-            "This is a demo response from the LLM Playground! The responsive design is working perfectly on mobile devices.",
-            "Hello! I'm simulating a response since this is a demo deployment. The navigation should stack nicely on smaller screens.",
-            "Great question! In demo mode, I can show you how the chat interface adapts to different screen sizes.",
-            "The responsive design ensures that this chat interface works seamlessly across desktop, tablet, and mobile devices.",
-            "This demo showcases the mobile-friendly navigation and chat layout. Try resizing your browser window!"
+            "Hello! I'm a simulated AI response in demo mode. This LLM Playground showcases responsive design that works beautifully across all devices.",
+            "Great question! Since this is a demo deployment, I'm providing simulated responses. The interface adapts perfectly to mobile, tablet, and desktop screens.",
+            "I'm demonstrating how this chat interface handles different types of conversations. Notice how the navigation collapses on smaller screens for better mobile experience.",
+            "This is a sample response showing the chat functionality. The responsive design ensures optimal viewing on any device size.",
+            "Excellent! In demo mode, I can discuss various topics. The UI automatically adjusts for the best user experience across different screen sizes.",
+            "Thanks for trying the demo! This playground demonstrates modern responsive web design principles with a clean, mobile-first approach.",
+            "I'm simulating an AI conversation to showcase the chat interface. The layout seamlessly adapts from desktop to mobile views.",
+            "Demo mode active! This response shows how the chat handles longer messages and maintains readability across all device types.",
+            "Hello there! This simulated response demonstrates the smooth, responsive chat experience. Try resizing your browser to see the adaptive design!",
+            "In this demo, I can provide varied responses on different topics. The interface maintains excellent usability whether you're on phone, tablet, or desktop."
           ];
           
-          const randomResponse = demoResponses[Math.floor(Math.random() * demoResponses.length)];
+          // Add some contextual variation based on user input
+          let contextualResponses = [...demoResponses];
+          const userInput = userMessage.toLowerCase();
+          
+          if (userInput.includes('mobile') || userInput.includes('responsive')) {
+            contextualResponses.push("You asked about mobile/responsive design! This demo perfectly showcases how the interface adapts to different screen sizes with fluid layouts and collapsible navigation.");
+          }
+          
+          if (userInput.includes('hello') || userInput.includes('hi')) {
+            contextualResponses.push("Hello! Welcome to the LLM Playground demo. I'm simulating responses to show how the chat interface works across different devices.");
+          }
+          
+          if (userInput.includes('test') || userInput.includes('demo')) {
+            contextualResponses.push("Perfect for testing! This demo mode lets you explore the responsive chat interface without needing backend API keys. Try it on different screen sizes!");
+          }
+          
+          const randomResponse = contextualResponses[Math.floor(Math.random() * contextualResponses.length)];
           
           const aiMessage = {
             id: Date.now() + 1,
