@@ -49,120 +49,26 @@ const LandingPage = () => {
       setIsLoading(true);
 
       try {
-        // Check if we're in demo mode (deployed without backend)
-        const isDemoMode = window.location.hostname.includes('vercel.app') || 
-                          window.location.hostname.includes('netlify.app');
+        // Use actual API
+        const providerMapping = {
+          'OpenAI': 'openai',
+          'Anthropic': 'anthropic', 
+          'Groq': 'groq',
+          'Gemini': 'gemini'
+        };
+        const providerKey = providerMapping[selectedProvider];
+        const response = await apiService.chat(providerKey, userMessage, selectedModel);
         
-        console.log('Demo mode check:', { hostname: window.location.hostname, isDemoMode });
-        
-        if (isDemoMode) {
-          // Demo mode - simulate AI response
-          console.log('Entering demo mode for message:', userMessage);
-          await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000)); // Simulate API delay
-          
-          const userInput = userMessage.toLowerCase().trim();
-          console.log('Processing user input:', userInput);
-          
-          // Define contextual responses that try to actually answer user questions
-          let selectedResponse = "";
-          
-          if (userInput.includes('hello') || userInput.includes('hi') || userInput.includes('hey')) {
-            const greetingResponses = [
-              "Hello! How can I help you today?",
-              "Hi there! What would you like to know or discuss?",
-              "Hello! I'm here to assist you. What's on your mind?"
-            ];
-            selectedResponse = greetingResponses[Math.floor(Math.random() * greetingResponses.length)];
-          } else if (userInput.includes('health') || userInput.includes('care') || userInput.includes('medical')) {
-            const healthResponses = [
-              "Healthcare is a broad field encompassing medical services, prevention, diagnosis, and treatment of illness. It includes hospitals, clinics, doctors, nurses, and various medical professionals working to maintain and improve people's health.",
-              "Healthcare systems vary by country, but generally include primary care (family doctors), specialized care (specialists), emergency services, and preventive care. Access and quality can vary significantly based on location and economic factors.",
-              "Modern healthcare focuses on both treatment and prevention, incorporating technology like electronic health records, telemedicine, and advanced diagnostic tools to improve patient outcomes."
-            ];
-            selectedResponse = healthResponses[Math.floor(Math.random() * healthResponses.length)];
-          } else if (userInput.includes('generative ai') || userInput.includes('artificial intelligence') || userInput.includes('ai')) {
-            const aiResponses = [
-              "Generative AI refers to artificial intelligence systems that can create new content like text, images, code, or audio. Examples include GPT models for text generation, DALL-E for images, and GitHub Copilot for code.",
-              "AI technology has advanced rapidly, with large language models like GPT, Claude, and Llama becoming increasingly capable at understanding and generating human-like responses across many domains.",
-              "Artificial intelligence is transforming many industries by automating tasks, providing insights from data, and enabling new forms of human-computer interaction."
-            ];
-            selectedResponse = aiResponses[Math.floor(Math.random() * aiResponses.length)];
-          } else if (userInput.includes('what is') || userInput.includes('what are')) {
-            const explanationResponses = [
-              "I'd be happy to explain that topic! Could you be more specific about what you'd like to know?",
-              "That's an interesting question. Let me provide some general information based on what you're asking about.",
-              "I can help explain that concept. Here's what I understand about your question..."
-            ];
-            selectedResponse = explanationResponses[Math.floor(Math.random() * explanationResponses.length)];
-          } else if (userInput.includes('how') || userInput.includes('why')) {
-            const howWhyResponses = [
-              "That's a great question! Let me break that down for you.",
-              "There are several factors that contribute to this. Here's what you should know:",
-              "Good question! The answer involves understanding a few key concepts."
-            ];
-            selectedResponse = howWhyResponses[Math.floor(Math.random() * howWhyResponses.length)];
-          } else if (userInput.includes('mobile') || userInput.includes('responsive')) {
-            const responsiveResponses = [
-              "Mobile and responsive design ensures websites work well on all devices - phones, tablets, and desktops. It involves flexible layouts, scalable images, and touch-friendly interfaces.",
-              "Responsive design uses CSS media queries and flexible grids to adapt content to different screen sizes, providing optimal viewing experiences across all devices.",
-              "Mobile-first design prioritizes the mobile experience, then enhances it for larger screens, ensuring fast loading and easy navigation on smartphones."
-            ];
-            selectedResponse = responsiveResponses[Math.floor(Math.random() * responsiveResponses.length)];
-          } else if (userInput.includes('test') || userInput.includes('demo')) {
-            const testingResponses = [
-              "This is a demo mode where I provide simulated responses. In the full version, you'd connect to real AI models like GPT, Claude, or Llama.",
-              "You're testing the demo! This shows how the chat interface works. The real version connects to various AI providers for actual conversations.",
-              "Demo mode active! This simulates how conversations would work with real AI models. Try asking different types of questions!"
-            ];
-            selectedResponse = testingResponses[Math.floor(Math.random() * testingResponses.length)];
-          } else {
-            // Default responses that try to be helpful and contextual
-            const defaultResponses = [
-              "I understand you're asking about that topic. While I'm in demo mode, I can provide general information and try to be helpful with your questions.",
-              "That's an interesting topic! I'd be happy to discuss it further. What specific aspect would you like to explore?",
-              "I can help with various topics and questions. Feel free to ask me anything you're curious about!",
-              "Thanks for your question! I'll do my best to provide useful information based on what you're asking.",
-              "I'm here to help with information and discussions on a wide range of topics. What would you like to know more about?",
-              "That's a good question! Let me share what I know about that topic.",
-              "I can assist with explanations, discussions, and answering questions on many subjects. How can I help you today?",
-              "Interesting question! I'm designed to be helpful and informative across many different topics and areas of knowledge."
-            ];
-            selectedResponse = defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
-          }
-          
-          console.log('Selected response:', selectedResponse);
-          
-          const aiMessage = {
-            id: Date.now() + 1,
-            type: 'assistant',
-            content: selectedResponse,
-            model: selectedModel,
-            provider: selectedProvider,
-            timestamp: new Date()
-          };
-          setMessages(prev => [...prev, aiMessage]);
-        } else {
-          // Production mode - use actual API
-          const providerMapping = {
-            'OpenAI': 'openai',
-            'Anthropic': 'anthropic', 
-            'Groq': 'groq',
-            'Gemini': 'gemini'
-          };
-          const providerKey = providerMapping[selectedProvider];
-          const response = await apiService.chat(providerKey, userMessage, selectedModel);
-          
-          // Add AI response to chat
-          const aiMessage = {
-            id: Date.now() + 1,
-            type: 'assistant',
-            content: response.data.content,
-            model: response.data.model,
-            provider: selectedProvider,
-            timestamp: new Date()
-          };
-          setMessages(prev => [...prev, aiMessage]);
-        }
+        // Add AI response to chat
+        const aiMessage = {
+          id: Date.now() + 1,
+          type: 'assistant',
+          content: response.data.content,
+          model: response.data.model,
+          provider: selectedProvider,
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, aiMessage]);
       } catch (error) {
         console.error('Chat error:', error);
         setError(error.message);

@@ -1,7 +1,12 @@
 import axios from 'axios';
 
-// Base URL for the backend API - use relative URL for Vite proxy
-const BASE_URL = '';
+// Determine if we're in production (deployed) or development
+const isProduction = window.location.hostname.includes('vercel.app') || 
+                    window.location.hostname.includes('netlify.app') ||
+                    window.location.hostname !== 'localhost';
+
+// Base URL for the backend API
+const BASE_URL = isProduction ? '/api' : '';
 
 // Create axios instance with default config
 const api = axios.create({
@@ -134,17 +139,40 @@ export const apiService = {
 
   // Generic chat method that routes to the appropriate provider
   async chat(provider, prompt, model, options = {}) {
-    switch (provider.toLowerCase()) {
-      case 'openai':
-        return this.chatWithOpenAI(prompt, model, options);
-      case 'anthropic':
-        return this.chatWithAnthropic(prompt, model, options);
-      case 'groq':
-        return this.chatWithGroq(prompt, model, options);
-      case 'gemini':
-        return this.chatWithGemini(prompt, model, options);
-      default:
-        throw new Error(`Unsupported provider: ${provider}`);
+    // Use serverless function in production, individual endpoints in development
+    if (isProduction) {
+      try {
+        const response = await api.post('/chat', {
+          provider: provider.toLowerCase(),
+          prompt,
+          model,
+          ...options
+        });
+        
+        return {
+          data: {
+            content: response.data.content,
+            model: response.data.model,
+            provider: response.data.provider
+          }
+        };
+      } catch (error) {
+        throw new Error(`Chat failed: ${error.response?.data?.error || error.message}`);
+      }
+    } else {
+      // Development mode - use individual provider methods
+      switch (provider.toLowerCase()) {
+        case 'openai':
+          return this.chatWithOpenAI(prompt, model, options);
+        case 'anthropic':
+          return this.chatWithAnthropic(prompt, model, options);
+        case 'groq':
+          return this.chatWithGroq(prompt, model, options);
+        case 'gemini':
+          return this.chatWithGemini(prompt, model, options);
+        default:
+          throw new Error(`Unsupported provider: ${provider}`);
+      }
     }
   }
 };
