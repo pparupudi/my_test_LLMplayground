@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Container, Navbar, Nav, Button, Dropdown, Card, Row, Col, Form, InputGroup, Alert, Spinner } from 'react-bootstrap';
 import { apiService } from '../services/api';
 
@@ -381,6 +382,20 @@ const LandingPage = () => {
                   ))}
                 </Dropdown.Menu>
               </Dropdown>
+              
+              <Link to="/about" style={{ textDecoration: 'none' }}>
+                <Button 
+                  variant="outline-primary" 
+                  size="sm"
+                  style={{ 
+                    fontSize: '12px',
+                    padding: '6px 12px',
+                    marginRight: '8px'
+                  }}
+                >
+                  About Me
+                </Button>
+              </Link>
               
               <Button 
                 variant="outline-danger" 
